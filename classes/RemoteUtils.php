@@ -178,4 +178,69 @@ class RemoteUtils {
 			throw new MWException( 'Expected title prefix not found.' );
 		}
 	}
+
+	static function preprocessTitle( $title, $options = null ) {
+		return self::preprocess( array(
+			'titles' => $title->getPrefixedText(),
+			'rvexpandtemplates' => '',
+		), $options );
+	}
+
+	static function preprocessRevision( $rev, $options = null ) {
+		return self::preprocess( array(
+			'revids' => $rev->getId(),
+			'rvexpandtemplates' => '',
+		), $options );
+	}
+
+	static function preprocessPage( $wikiPage, $options = null ) {
+		return self::preprocess( array(
+			'pageids' => $wikiPage->getId(),
+			'rvexpandtemplates' => '',
+		), $options );
+	}
+
+	static function preprocessTitleToDom( $title, $options = null ) {
+		return self::preprocess( array(
+			'titles' => $title->getPrefixedText(),
+			'rvgeneratexml' => '',
+		), $options, 'parsetree' );
+	}
+
+	static function preprocessRevisionToDom( $rev, $options = null ) {
+		return self::preprocess( array(
+			'revids' => $rev->getId(),
+			'rvgeneratexml' => '',
+		), $options, 'parsetree' );
+	}
+
+	static function preprocessPageToDom( $wikiPage, $options = null ) {
+		return self::preprocess( array(
+			'pageids' => $wikiPage->getId(),
+			'rvgeneratexml' => '',
+		), $options, 'parsetree' );
+	}
+
+	static function preprocess( $params, $options = null, $key = '*' ) {
+		global $wgLabs;
+
+		$params = array(
+			'action' => 'query',
+			'prop' => 'revisions',
+			'rvprop' => 'content',
+			'indexpageids' => '',
+		) + $params;
+		$resp = $wgLabs->apiRequest( $params );
+
+		if ( !$resp || isset( $resp->error ) ) {
+			return null;
+		}
+
+		$respPage = $resp->query->pages->{$resp->query->pageids[0]};
+		if ( !isset( $respPage->revisions ) ) {
+			return null;
+		}
+
+		return $respPage->revisions[0]->{$key};
+	}
 }
