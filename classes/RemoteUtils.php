@@ -241,6 +241,10 @@ class RemoteUtils {
 			return null;
 		}
 
+		if ( !isset( $respPage->revisions[0]->{$key} ) ) {
+			return null;
+		}
+
 		return $respPage->revisions[0]->{$key};
 	}
 }
