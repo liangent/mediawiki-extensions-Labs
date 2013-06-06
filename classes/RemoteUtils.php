@@ -201,24 +201,24 @@ class RemoteUtils {
 	}
 
 	static function preprocessTitleToDom( $title, $options = null ) {
-		return self::preprocess( array(
+		return self::preprocessXmlToDom( self::preprocess( array(
 			'titles' => $title->getPrefixedText(),
 			'rvgeneratexml' => '',
-		), $options, 'parsetree' );
+		), $options, 'parsetree' ) );
 	}
 
 	static function preprocessRevisionToDom( $rev, $options = null ) {
-		return self::preprocess( array(
+		return self::preprocessXmlToDom( self::preprocess( array(
 			'revids' => $rev->getId(),
 			'rvgeneratexml' => '',
-		), $options, 'parsetree' );
+		), $options, 'parsetree' ) );
 	}
 
 	static function preprocessPageToDom( $wikiPage, $options = null ) {
-		return self::preprocess( array(
+		return self::preprocessXmlToDom( self::preprocess( array(
 			'pageids' => $wikiPage->getId(),
 			'rvgeneratexml' => '',
-		), $options, 'parsetree' );
+		), $options, 'parsetree' ) );
 	}
 
 	static function preprocess( $params, $options = null, $key = '*' ) {
@@ -246,5 +246,26 @@ class RemoteUtils {
 		}
 
 		return $respPage->revisions[0]->{$key};
+	}
+
+	static function preprocessXmlToDom( $xml ) {
+		if ( $xml === null ) {
+			return null;
+		}
+		$dom = new DOMDocument;
+		wfSuppressWarnings();
+		$result = $dom->loadXML( $xml );
+		wfRestoreWarnings();
+		if ( !$result ) {
+			// Try running the XML through UtfNormal to get rid of invalid characters
+			$xml = UtfNormal::cleanUp( $xml );
+			// 1 << 19 == XML_PARSE_HUGE, needed so newer versions of libxml2 don't barf when the XML is >256 levels deep
+			$result = $dom->loadXML( $xml, 1 << 19 );
+			if ( !$result ) {
+				return null;
+			}
+		}
+		$obj = new PPNode_DOM( $dom->documentElement );
+		return $obj;
 	}
 }
