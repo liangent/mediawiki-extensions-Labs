@@ -43,7 +43,7 @@ class Labs {
 	}
 
 	static function factory( $wiki ) {
-		global $IP, $wgLabsConfigDir, $wgLabsUsers, $wgDBuser, $wgDBpassword;
+		global $IP, $wgLabsConfigDir, $wgLabsUsers, $wgDBuser, $wgDBpassword, $wgLabsAcceptedSettings;
 
 		if ( $wiki === '' ) {
 			header( 'Content-type: text/plain' );
@@ -103,14 +103,58 @@ class Labs {
 			return false;
 		}
 
-		$labs = new self( $dbName, $userInfo, $conf );
+		# Get configurations
+		if ( isset( $parts[2] ) ) {
+			$acceptedSettings = array();
+			$settings = explode( '!', $parts[2] );
+			foreach ( $settings as $settingPiece ) {
+				$settingPieces = explode( '=', $settingPiece, 2 );
+				if ( count( $settingPieces ) == 1 ) {
+					if ( substr( $settingPieces[0], 0, 1 ) === '^' ) {
+						$setting = substr( $settingPieces[0], 1 );
+						$value = false;
+					} else {
+						$setting = $settingPieces[0];
+						$value = true;
+					}
+				} else {
+					list( $setting, $value ) = $settingPieces;
+				}
+				if ( isset( $wgLabsAcceptedSettings[$setting] ) ) {
+					switch ( $wgLabsAcceptedSettings[$setting] ) {
+					case 'int':
+						$value = (int)$value;
+						break;
+					case 'bool':
+						$value = (bool)$value;
+						break;
+					case 'float':
+						$value = (float)$value;
+						break;
+					case 'string':
+						$value = (string)$value;
+						break;
+					default:
+						header( 'Content-type: text/plain' );
+						echo "Invalid setting type: {$wgLabsAcceptedSettings[$setting]}.\n";
+						return false;
+					}
+					$acceptedSettings[$setting] = $value;
+				}
+			}
+		} else {
+			$acceptedSettings = array();
+		}
+
+		$labs = new self( $dbName, $userInfo, $conf, $acceptedSettings );
 		return $labs;
 	}
 
-	function __construct( $dbName, $userInfo, $conf ) {
+	function __construct( $dbName, $userInfo, $conf, $settings ) {
 		$this->dbName = $dbName;
 		$this->userInfo = $userInfo;
 		$this->conf = $conf;
+		$this->settings = $settings;
 		$this->cookieJar = null;
 		$this->token = array();
 	}
@@ -228,6 +272,10 @@ class Labs {
 		$wgUploadDirectory = "$IP/images/$wgDBname";
 		$wgUploadPath = "//upload.wikimedia.org/$site/$lang";
 		$wgGenerateThumbnailOnParse = false;
+
+		foreach ( $this->settings as $setting => $value ) {
+			$GLOBALS[$setting] = $value;
+		}
 	}
 
 	function replag() {
