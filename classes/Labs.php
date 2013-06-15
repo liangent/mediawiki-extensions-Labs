@@ -110,7 +110,7 @@ class Labs {
 			foreach ( $settings as $settingPiece ) {
 				$settingPieces = explode( '=', $settingPiece, 2 );
 				if ( count( $settingPieces ) == 1 ) {
-					if ( substr( $settingPieces[0], 0, 1 ) === '^' ) {
+					if ( substr( $settingPieces[0], 0, 1 ) === '-' ) {
 						$setting = substr( $settingPieces[0], 1 );
 						$value = false;
 					} else {
