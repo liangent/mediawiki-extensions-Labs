@@ -443,6 +443,7 @@ class Labs {
 		$wgHooks['TitleMove'][] = $this;
 		$wgHooks['ArticleRollback'][] = $this;
 		$wgHooks['UserEffectiveGroups'][] = $this;
+		$wgHooks['SkinTemplateToolboxEnd'][] = $this;
 	}
 
 	function onArticleSave( &$article, &$user, &$text, &$summary, $minor,
@@ -615,6 +616,19 @@ class Labs {
 				}
 			}
 		}
+
+		return true;
+	}
+
+	function onSkinTemplateToolboxEnd( $tpl ) {
+		global $wgSitename, $wgWMFServer, $wgWMFScriptPath;
+
+		echo $tpl->makeListItem( 'wmfserver', array(
+			'id' => 't-wmfserver',
+			'text' => $tpl->getSkin()->getContext()->getLanguage()->getArrow() . ' ' . $wgSitename,
+			'href' => wfAppendQuery( $wgWMFServer . $wgWMFScriptPath,
+				$tpl->getSkin()->getContext()->getRequest()->getValues() ),
+		) );
 
 		return true;
 	}
