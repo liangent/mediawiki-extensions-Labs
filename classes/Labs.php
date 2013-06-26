@@ -134,6 +134,9 @@ class Labs {
 					case 'string':
 						$value = (string)$value;
 						break;
+					case 'array':
+						$value = (array)$value;
+						break;
 					default:
 						header( 'Content-type: text/plain' );
 						echo "Invalid setting type: {$wgLabsAcceptedSettings[$setting]}.\n";

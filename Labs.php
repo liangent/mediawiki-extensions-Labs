@@ -22,4 +22,5 @@ $wgLabsExtraMessageNS = NS_SPECIAL;
 $wgLabsExtraMessagePrefix = '';
 $wgLabsAcceptedSettings = array(
 	'wgUseDatabaseMessages' => 'bool',
+	'wgDisabledVariants' => 'array',
 );
