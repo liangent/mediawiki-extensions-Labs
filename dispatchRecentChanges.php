@@ -73,6 +73,10 @@ class DispatchRecentChanges extends Maintenance {
 					$this->output( " ... Restarting due to high rclag $rclag > maxrclag {$this->maxrclag}.\n" );
 					return;
 				}
+				if ( $rc->getAttribute( 'rc_namespace' ) == NS_MEDIAWIKI ) {
+					# I imagine this is the only sane way to clear cache, even for just one title?
+					MessageCache::destroyInstance();
+				}
 				$this->output( ' @ ' . wfTimestamp( TS_DB, $row->rc_timestamp ) . ' ...' );
 				if ( $this->hasOption( 'hook' ) ) {
 					wfRunHooks( $this->getOption( 'hook' ), array( $rc, $this ) );
