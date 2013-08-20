@@ -287,12 +287,12 @@ class Labs {
 	}
 
 	static function request( $postData = null, $cookieJar = null, $method = 'POST', $format = 'json', $path = 'api.php' ) {
-		global $wgWMFServer, $wgWMFScriptPath;
+		global $wgWMFCanonicalServer, $wgWMFScriptPath;
 
 		if ( $path === 'api.php' && $format === 'json' ) {
 			$path .= '?format=json';
 		}
-		$req = MWHttpRequest::factory( "$wgWMFServer$wgWMFScriptPath/$path", array( 'method' => $method ) );
+		$req = MWHttpRequest::factory( "$wgWMFCanonicalServer$wgWMFScriptPath/$path", array( 'method' => $method ) );
 		if ( !is_null( $postData ) ) {
 			$req->setData( $postData );
 		}
