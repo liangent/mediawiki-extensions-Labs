@@ -453,6 +453,12 @@ class Labs {
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
 	) {
+		global $wmgUseWikibaseRepo;
+		if ( $wmgUseWikibaseRepo && $content instanceof Wikibase\EntityContent ) {
+			return $this->wikibaseEntityContentSave( $article, $user, $content, $summary, $minor,
+				$watchthis, $sectionanchor, $flags, $status, $baseRevId
+			);
+		}
 		$baseRev = $baseRevId ? Revision::newFromId( $baseRevId ) : false;
 		$text = $content->serialize();
 		$resp = $this->apiRequest( array(
@@ -486,6 +492,58 @@ class Labs {
 		} else {
 			$status->setResult( true, $resp->edit );
 		}
+		return false;
+	}
+
+	function wikibaseEntityContentSave( &$article, &$user, &$content, &$summary, $minor,
+		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
+	) {
+		$entity = $content->getEntity();
+		$serializerFactory = new Wikibase\Lib\Serializers\SerializerFactory();
+		$serializationOptions = new Wikibase\Lib\Serializers\EntitySerializationOptions(
+			Wikibase\Repo\WikibaseRepo::getDefaultInstance()->getIdFormatter()
+		);
+		$serializer = $serializerFactory->newSerializerForObject( $entity, $serializationOptions );
+		$serialized = $serializer->getSerialized( $entity );
+		if ( isset( $serialized['id'] ) ) {
+			# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
+			unset( $serialized['id'] );
+		}
+		if ( isset( $serialized['type'] ) ) {
+			# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
+			unset( $serialized['type'] );
+		}
+		$resp = $this->apiRequest( array(
+			'action' => 'wbeditentity',
+			'id' => $entity->getId()->getSerialization(),
+			( $baseRevId !== false ? 'baserevid' : 'notbaserevid' ) => $baseRevId,
+			'data' => FormatJson::encode( $serialized ),
+			'token' => array(
+				'type' => 'token',
+				'token' => 'edit',
+			),
+			'summary' => $summary,
+			'clear' => '',
+			( $flags & EDIT_SUPPRESS_RC ? 'bot' : 'notbot' ) => '',
+		) );
+		if ( $resp === null ) {
+			$status->fatal( "edit-api-server-error" );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		if ( isset( $resp->error ) ) {
+			$status->fatal( "edit-api-{$resp->error->code}" );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		if ( !isset( $resp->success ) ) {
+			$status->fatal( 'edit-api-remote' );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		$status->setResult( true, array(
+			'revision' => Revision::newFromId( $resp->entity->lastrevid ),
+		) );
 		return false;
 	}
 
