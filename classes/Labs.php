@@ -438,7 +438,7 @@ class Labs {
 	function installHooks() {
 		global $wgHooks;
 
-		$wgHooks['ArticleSave'][] = $this;
+		$wgHooks['PageContentSave'][] = $this;
 		$wgHooks['ArticlePurge'][] = $this;
 		$wgHooks['LinksUpdate'][] = $this;
 		$wgHooks['ArticleDelete'][] = $this;
@@ -449,10 +449,11 @@ class Labs {
 		$wgHooks['SkinTemplateToolboxEnd'][] = $this;
 	}
 
-	function onArticleSave( &$article, &$user, &$text, &$summary, $minor,
+	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
 	) {
 		$baseRev = $baseRevId ? Revision::newFromId( $baseRevId ) : false;
+		$text = $content->serialize();
 		$resp = $this->apiRequest( array(
 			'action' => 'edit',
 			'title' => $article->getTitle()->getPrefixedText(),
