@@ -482,8 +482,10 @@ class Labs {
 		}
 		if ( $resp->edit->result !== 'Success' ) {
 			$status->fatal( 'edit-api-remote' );
+			$status->setResult( false, $resp->edit );
+		} else {
+			$status->setResult( true, $resp->edit );
 		}
-		$status->setResult( true, $resp->edit );
 		return false;
 	}
 
