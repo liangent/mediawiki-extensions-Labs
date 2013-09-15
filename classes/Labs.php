@@ -167,7 +167,8 @@ class Labs {
 			$wgSharedDB, $wgSharedTables, $wgDisableCounters, $wgDisableAnonTalk, $wgSpecialPageCacheUpdates,
 			$wgServer, $wgCanonicalServer, $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath, $IP,
 			$wgForeignFileRepos, $wgUploadDirectory, $wgGenerateThumbnailOnParse, $wgLanguageConverterCacheType,
-			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache;
+			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache,
+			$wgExtensionFunctions;
 
 		# Basic stuff
 		$wgDBname = $this->dbName;
@@ -276,6 +277,15 @@ class Labs {
 		$wgUploadDirectory = "$IP/images/$wgDBname";
 		$wgUploadPath = "//upload.wikimedia.org/$site/$lang";
 		$wgGenerateThumbnailOnParse = false;
+
+		// Wikibase
+		$wgExtensionFunctions[] = function() {
+			global $wgWBStores;
+			if ( isset( $wgWBStores ) ) {
+				$wgWBStores['labsstore'] = 'Wikibase\LabsStore';
+				Wikibase\Settings::singleton()->setSetting( 'defaultStore', 'labsstore' );
+			}
+		};
 
 		foreach ( $this->settings as $setting => $value ) {
 			$GLOBALS[$setting] = $value;
