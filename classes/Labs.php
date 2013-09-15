@@ -179,7 +179,8 @@ class Labs {
 		$wikiTags = array();
 		foreach ( array(
 			'private', 'fishbowl', 'special', 'closed', 'flaggedrevs',
-			'small', 'medium', 'large', 'wikimania', 'wikidataclient',
+			'small', 'medium', 'large', 'wikimania',
+			'wikidata', 'wikidataclient', 'visualeditor',
 		) as $tag ) {
 			$dblist = array_map( 'trim', file( "$wgLabsConfigDir/$tag.dblist" ) );
 			if ( in_array( $wgDBname, $dblist ) ) {
