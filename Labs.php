@@ -7,6 +7,7 @@ $wgAutoloadClasses['LoadBalancerLabs'] = dirname( __FILE__ ) . '/classes/LoadBal
 $wgAutoloadClasses['RemoteUtils'] = dirname( __FILE__ ) . '/classes/RemoteUtils.php';
 $wgAutoloadClasses['Wikibase\LabsStore'] = dirname( __FILE__ ) . '/classes/WikibaseLabsStore.php';
 $wgAutoloadClasses['Wikibase\LabsIdGenerator'] = dirname( __FILE__ ) . '/classes/WikibaseLabsIdGenerator.php';
+$wgAutoloadClasses['Wikibase\LabsWikiPageEntityLookup'] = dirname( __FILE__ ) . '/classes/WikibaseLabsWikiPageEntityLookup.php';
 
 $wgExtensionFunctions[] = function() {
 	global $wgLabs;

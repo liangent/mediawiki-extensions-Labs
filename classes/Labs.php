@@ -230,6 +230,8 @@ class Labs {
 			'recentchanges', 'redirect', 'revision_userindex' => 'revision',
 			'site_identifiers', 'site_stats', 'sites', 'tag_summary', 'templatelinks', 'updatelog',
 			'user', 'user_former_groups', 'user_groups', 'valid_tag',
+			/* Wikibase: */ 'wb_changes', 'wb_changes_dispatch',
+			'wb_entity_per_page', 'wb_id_counters', 'wb_items_per_site', 'wb_terms',
 		);
 
 		# Disable some database operations
@@ -284,6 +286,9 @@ class Labs {
 			if ( isset( $wgWBStores ) ) {
 				$wgWBStores['labsstore'] = 'Wikibase\LabsStore';
 				Wikibase\Settings::singleton()->setSetting( 'defaultStore', 'labsstore' );
+			}
+			if ( class_exists( 'Wikibase\Settings' ) ) {
+				Wikibase\Settings::singleton()->setSetting( 'sharedCacheType', false );
 			}
 		};
 
