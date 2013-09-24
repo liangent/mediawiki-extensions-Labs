@@ -173,7 +173,7 @@ class Labs {
 		# Basic stuff
 		$wgDBname = $this->dbName;
 		$wgConf = $this->conf;
-		$wgLocalDatabases = &$wgConf->getLocalDatabases();
+		$wgLocalDatabases = $wgConf->getLocalDatabases(); # Setting as reference doesn't work?
 
 		# Extract stuff from $wgConf
 		list( $site, $lang ) = $wgConf->siteFromDB( $wgDBname );
