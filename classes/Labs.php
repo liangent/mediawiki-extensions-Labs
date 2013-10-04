@@ -208,7 +208,7 @@ class Labs {
 				'flags' => DBO_DEFAULT,
 			),
 		);
-		foreach ( $wgConf->wikis as $wiki ) {
+		foreach ( array_merge( $wgConf->wikis, array( 'centralauth' ) ) as $wiki ) {
 			if ( $wiki == $wgDBname ) {
 				$wgLBFactoryConf['sectionLoads']['DEFAULT']["$wiki.labsdb"] = 0;
 				$wgLBFactoryConf['templateOverridesByServer']["$wiki.labsdb"] = array(
