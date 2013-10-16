@@ -308,20 +308,26 @@ class Labs {
 		if ( $path === 'api.php' && $format === 'json' ) {
 			$path .= '?format=json';
 		}
-		$req = MWHttpRequest::factory( "$wgWMFCanonicalServer$wgWMFScriptPath/$path", array( 'method' => $method ) );
+		$url = "$wgWMFCanonicalServer$wgWMFScriptPath/$path";
+		$debug = "WMF server request: $url";
+		$req = MWHttpRequest::factory( $url, array( 'method' => $method ) );
 		if ( !is_null( $postData ) ) {
 			$req->setData( $postData );
+			$debug .= '; POSTDATA: ' . wfArrayToCgi( $postData );
 		}
 		if ( !is_null( $cookieJar ) ) {
 			$req->setCookieJar( $cookieJar );
 		}
+		wfDebug( $debug );
 
 		$status = $req->execute();
 		if ( !$status->isOK() ) {
+			wfDebug( "; failed.\n" );
 			return null;
 		}
 
 		$content = $req->getContent();
+		wfDebug( "; response: $content\n" );
 		if ( $format === 'json' ) {
 			$content = FormatJson::decode( $content );
 		}
