@@ -534,6 +534,15 @@ class Labs {
 			# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
 			unset( $serialized['type'] );
 		}
+		if ( isset( $serialized['claims'] ) ) {
+			foreach ( $serialized['claims'] as &$claims ) {
+				foreach ( $claims as &$claim ) {
+					if ( isset( $claim['id'] ) ) {
+						unset( $claim['id'] );
+					}
+				}
+			}
+		}
 		$resp = $this->apiRequest( array(
 			'action' => 'wbeditentity',
 			'id' => $entity->getId()->getSerialization(),
