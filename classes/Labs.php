@@ -526,20 +526,13 @@ class Labs {
 		);
 		$serializer = $serializerFactory->newSerializerForObject( $entity, $serializationOptions );
 		$serialized = $serializer->getSerialized( $entity );
-		if ( isset( $serialized['id'] ) ) {
-			# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
-			unset( $serialized['id'] );
-		}
-		if ( isset( $serialized['type'] ) ) {
-			# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
-			unset( $serialized['type'] );
-		}
+		# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
+		unset( $serialized['id'] );
+		unset( $serialized['type'] );
 		if ( isset( $serialized['claims'] ) ) {
 			foreach ( $serialized['claims'] as &$claims ) {
 				foreach ( $claims as &$claim ) {
-					if ( isset( $claim['id'] ) ) {
-						unset( $claim['id'] );
-					}
+					unset( $claim['id'] );
 				}
 			}
 		}
