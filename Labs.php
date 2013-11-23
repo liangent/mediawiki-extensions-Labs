@@ -8,6 +8,13 @@ $wgAutoloadClasses['RemoteUtils'] = dirname( __FILE__ ) . '/classes/RemoteUtils.
 $wgAutoloadClasses['Wikibase\LabsStore'] = dirname( __FILE__ ) . '/classes/WikibaseLabsStore.php';
 $wgAutoloadClasses['Wikibase\LabsIdGenerator'] = dirname( __FILE__ ) . '/classes/WikibaseLabsIdGenerator.php';
 $wgAutoloadClasses['Wikibase\LabsWikiPageEntityLookup'] = dirname( __FILE__ ) . '/classes/WikibaseLabsWikiPageEntityLookup.php';
+$wgAutoloadClasses['SpecialLabsOAuth'] = dirname( __FILE__ ) . '/specials/SpecialLabsOAuth.php';
+
+$wgExtensionMessagesFiles[ 'Labs' ] = __DIR__ . '/Labs.i18n.php';
+$wgExtensionMessagesFiles[ 'LabsAlias' ] = __DIR__ . '/Labs.alias.php';
+
+$wgSpecialPages[ 'LabsOAuth' ] = 'SpecialLabsOAuth';
+$wgSpecialPageGroups[ 'LabsOAuth' ] = 'login';
 
 $wgExtensionFunctions[] = function() {
 	global $wgLabs;
@@ -27,3 +34,6 @@ $wgLabsAcceptedSettings = array(
 	'wgUseDatabaseMessages' => 'bool',
 	'wgDisabledVariants' => 'array',
 );
+
+$wgLabsOAuthConsumerToken = '';
+$wgLabsOAuthSecretToken = '';
