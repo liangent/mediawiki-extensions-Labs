@@ -302,7 +302,7 @@ class Labs {
 		return $dbw->selectField( 'recentchanges', 'UNIX_TIMESTAMP() - UNIX_TIMESTAMP( MAX( rc_timestamp ) )' );
 	}
 
-	static function request( $postData = null, $cookieJar = null, $method = 'POST', $format = 'json', $path = 'api.php' ) {
+	function request( $postData = null, $cookieJar = null, $method = 'POST', $format = 'json', $path = 'api.php' ) {
 		global $wgWMFCanonicalServer, $wgWMFScriptPath;
 
 		if ( $path === 'api.php' && $format === 'json' ) {
@@ -311,9 +311,27 @@ class Labs {
 		$url = "$wgWMFCanonicalServer$wgWMFScriptPath/$path";
 		$debug = "WMF server request: $url";
 		$req = MWHttpRequest::factory( $url, array( 'method' => $method ) );
+		if ( isset( $this->userInfo['oauth'] ) ) {
+			$api_req = OAuthRequest::from_consumer_and_token(
+				$this->userInfo['oauth'],
+				$this->userInfo['oauth_ac'],
+				$method, $url, $postData
+			);
+			$api_req->sign_request(
+				$this->userInfo['oauth_method'],
+				$this->userInfo['oauth'],
+				$this->userInfo['oauth_ac']
+			);
+			$header = explode( ': ', $api_req->to_header(), 2 );
+			$req->setHeader( $header[0], $header[1] );
+			$debug .= "; OAuth header: {$header[0]}: {$header[1]}";
+			if ( is_array( $postData ) ) {
+				$postData = wfArrayToCgi( $postData );
+			}
+		}
 		if ( !is_null( $postData ) ) {
 			$req->setData( $postData );
-			$debug .= '; POSTDATA: ' . wfArrayToCgi( $postData );
+			$debug .= '; POSTDATA: ' . ( is_array( $postData ) ? wfArrayToCgi( $postData ) : $postData );
 		}
 		if ( !is_null( $cookieJar ) ) {
 			$req->setCookieJar( $cookieJar );
@@ -358,7 +376,7 @@ class Labs {
 					}
 				}
 			}
-			$resp = self::request( $data, $this->cookieJar );
+			$resp = $this->request( $data, $this->cookieJar );
 			if ( isset( $resp->error ) && $resp->error->code === 'badtoken' ) {
 				$this->login();
 				continue;
@@ -370,24 +388,49 @@ class Labs {
 	function login() {
 		$cookieJar = new CookieJar();
 
-		# Login token
-		$lgresp = self::request( array(
-			'action' => 'login',
-			'lgname' => $this->userInfo['username'],
-			'lgpassword' => $this->userInfo['password'],
-		), $cookieJar );
+		if ( isset( $this->userInfo['password'] ) ) {
+			# Login token
+			$lgresp = $this->request( array(
+				'action' => 'login',
+				'lgname' => $this->userInfo['username'],
+				'lgpassword' => $this->userInfo['password'],
+			), $cookieJar );
 
-		# Real login
-		$lgresp = self::request( array(
-			'action' => 'login',
-			'lgname' => $this->userInfo['username'],
-			'lgpassword' => $this->userInfo['password'],
-			'lgtoken' => $lgresp->login->token,
-		), $cookieJar );
+			# Real login
+			$lgresp = $this->request( array(
+				'action' => 'login',
+				'lgname' => $this->userInfo['username'],
+				'lgpassword' => $this->userInfo['password'],
+				'lgtoken' => $lgresp->login->token,
+			), $cookieJar );
 
-		# Confirm we've already logged in
-		if ( $lgresp->login->result !== 'Success' ) {
-			throw new MWException( 'API login failed.' );
+			# Confirm we've already logged in
+			if ( $lgresp->login->result !== 'Success' ) {
+				throw new MWException( 'API login failed.' );
+			}
+		} elseif ( isset( $this->userInfo['oauth_token'] ) && isset( $this->userInfo['oauth_secret'] ) ) {
+			global $IP, $wgLabsOAuthConsumerToken, $wgLabsOAuthSecretToken, $wgLabs;
+			require_once "$IP/extensions/OAuth/lib/OAuth.php";
+			$this->userInfo['oauth'] = new OAuthConsumer( $wgLabsOAuthConsumerToken, $wgLabsOAuthSecretToken );
+			$this->userInfo['oauth_ac'] = new OAuthConsumer(
+				$this->userInfo['oauth_token'], $this->userInfo['oauth_secret']
+			);
+			$hmac_method = new OAuthSignatureMethod_HMAC_SHA1();
+			$this->userInfo['oauth_method'] = $hmac_method;
+
+			$resp = $this->apiRequest( array(
+				'action' => 'query',
+				'meta' => 'userinfo',
+			), false );
+
+			if ( !isset( $resp->query->userinfo->name ) || $resp->query->userinfo->name !== $wgLabs->user->getName() ) {
+				unset( $this->userInfo['oauth'] );
+				unset( $this->userInfo['oauth_ac'] );
+				unset( $this->userInfo['oauth_method'] );
+				throw new MWException( 'Incorrect OAuth data.' );
+			}
+		} else {
+			throw new MWException( 'No valid authencation method configured.' );
 		}
 		$this->cookieJar = $cookieJar;
 		$this->token = array();
