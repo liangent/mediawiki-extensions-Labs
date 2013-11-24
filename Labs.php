@@ -18,7 +18,9 @@ $wgSpecialPageGroups[ 'LabsOAuth' ] = 'login';
 
 $wgExtensionFunctions[] = function() {
 	global $wgLabs;
-	$wgLabs->user = User::newFromName( $wgLabs->userInfo['username'] );
+	if ( php_sapi_name() === 'cli' ) {
+		$wgLabs->user = User::newFromName( $wgLabs->userInfo['username'] );
+	}
 };
 
 function wfReplag() {

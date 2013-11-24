@@ -155,7 +155,12 @@ class Labs {
 
 	function __construct( $dbName, $userInfo, $conf, $settings ) {
 		$this->dbName = $dbName;
-		$this->userInfo = $userInfo;
+		if ( php_sapi_name() === 'cli' ) {
+			$this->userInfo = $userInfo;
+		} else {
+			$this->user = null;
+			$this->userInfo = array();
+		}
 		$this->conf = $conf;
 		$this->settings = $settings;
 		$this->cookieJar = null;
@@ -385,7 +390,7 @@ class Labs {
 		}
 	}
 
-	function login() {
+	function login( $webInit = false ) {
 		$cookieJar = new CookieJar();
 
 		if ( isset( $this->userInfo['password'] ) ) {
@@ -423,7 +428,16 @@ class Labs {
 				'meta' => 'userinfo',
 			), false );
 
-			if ( !isset( $resp->query->userinfo->name ) || $resp->query->userinfo->name !== $wgLabs->user->getName() ) {
+			if ( $webInit ) {
+				if ( isset( $resp->query->userinfo->id ) && $resp->query->userinfo->id !== 0 ) {
+					$this->user = User::newFromId( $resp->query->userinfo->id );
+					$this->userInfo['username'] = $resp->query->userinfo->name;
+				} else {
+					unset( $this->userInfo['oauth'] );
+					unset( $this->userInfo['oauth_ac'] );
+					unset( $this->userInfo['oauth_method'] );
+				}
+			} elseif ( !isset( $resp->query->userinfo->name ) || $resp->query->userinfo->name !== $wgLabs->user->getName() ) {
 				unset( $this->userInfo['oauth'] );
 				unset( $this->userInfo['oauth_ac'] );
 				unset( $this->userInfo['oauth_method'] );
@@ -434,6 +448,27 @@ class Labs {
 		}
 		$this->cookieJar = $cookieJar;
 		$this->token = array();
+	}
+
+	function loadWebUser() {
+		$context = RequestContext::getMain();
+		$request = $context->getRequest();
+		$tokenKey = $request->getCookie( 'labsOAuthToken', '' );
+		$tokenSecret = $request->getCookie( 'labsOAuthSecret', '' );
+		if ( $tokenKey !== null && $tokenSecret !== null ) {
+			$this->userInfo['oauth_token'] = $tokenKey;
+			$this->userInfo['oauth_secret'] = $tokenSecret;
+			$this->login( true );
+		}
+	}
+
+	function onUserLoadFromSession( $user, &$result ) {
+		$this->loadWebUser();
+		if ( $this->user !== null ) {
+			$user->setId( $this->user->getId() );
+			$result = true;
+		}
+		return true;
 	}
 
 	function token( $type = 'edit', $data = array() ) {
@@ -512,6 +547,7 @@ class Labs {
 		$wgHooks['ArticleRollback'][] = $this;
 		$wgHooks['UserEffectiveGroups'][] = $this;
 		$wgHooks['SkinTemplateToolboxEnd'][] = $this;
+		$wgHooks['UserLoadFromSession'][] = $this;
 	}
 
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
