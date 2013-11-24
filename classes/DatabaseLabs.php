@@ -16,4 +16,9 @@ class DatabaseLabs extends DatabaseMysql {
 	function getSlavePos() {
 		return DatabaseBase::getSlavePos();
 	}
+
+	function getDBname() {
+		$dbName = parent::getDBname();
+		return preg_replace( '/_p$/', '', $dbName );
+	}
 }
