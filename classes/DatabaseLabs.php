@@ -21,4 +21,8 @@ class DatabaseLabs extends DatabaseMysql {
 		$dbName = parent::getDBname();
 		return preg_replace( '/_p$/', '', $dbName );
 	}
+
+	public function estimateRowCount( $table, $vars = '*', $conds = '', $fname = __METHOD__, $options = array() ) {
+		return DatabaseBase::estimateRowCount( $table, $vars, $conds, $fname, $options );
+	}
 }
