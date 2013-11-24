@@ -35,6 +35,8 @@ $wgLabsExtraMessagePrefix = '';
 $wgLabsAcceptedSettings = array(
 	'wgUseDatabaseMessages' => 'bool',
 	'wgDisabledVariants' => 'array',
+	'wgLabsOAuthConsumerToken' => 'string',
+	'wgLabsOAuthSecretToken' => 'string',
 );
 
 $wgLabsOAuthConsumerToken = '';
