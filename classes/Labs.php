@@ -34,9 +34,6 @@ class Labs {
 		# Path setup
 		$wgUsePathInfo = false;
 		$wgScriptExtension .= "/$wiki";
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			unset( $_SERVER['REQUEST_URI'] );
-		}
 
 		# Hooks
 		$wgLabs->installHooks();
@@ -572,6 +569,7 @@ class Labs {
 		$wgHooks['UserLoadFromSession'][] = $this;
 		$wgHooks['UserLoginForm'][] = $this;
 		$wgHooks['UserLogoutComplete'][] = $this;
+		$wgHooks['TestCanonicalRedirect'][] = $this;
 	}
 
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
@@ -822,5 +820,9 @@ class Labs {
 		) );
 
 		return true;
+	}
+
+	function onTestCanonicalRedirect( $request, $title, $output ) {
+		return false;
 	}
 }
