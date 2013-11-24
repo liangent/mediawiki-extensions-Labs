@@ -471,6 +471,28 @@ class Labs {
 		return true;
 	}
 
+	function onUserLoginForm( &$template ) {
+		global $wgLabsOAuthScript;
+		$request = RequestContext::getMain()->getRequest();
+		$returnTo = $request->getVal( 'returnto', '' );
+		$returnToTitle = Title::newFromText( $returnTo );
+		if ( !$returnToTitle || $returnToTitle->isSpecial( 'Userlogout' ) ) {
+			$returnToTitle = Title::newMainPage();
+		}
+		$returnToUrl = $returnToTitle->getFullURL( $request->getVal( 'returntoquery', '' ) );
+		RequestContext::getMain()->getOutput()->redirect(
+			wfAppendQuery( $wgLabsOAuthScript, array( 'return_to' => $returnToUrl ) )
+		);
+		return true;
+	}
+
+	function onUserLogoutComplete( &$user, &$injected_html, $oldName ) {
+		$response = RequestContext::getMain()->getRequest()->response();
+		$cookieOptions = array( 'prefix' => '' );
+		$response->setCookie( 'labsOAuthToken', '', -1, $cookieOptions );
+		$response->setCookie( 'labsOAuthSecret', '', -1, $cookieOptions );
+	}
+
 	function token( $type = 'edit', $data = array() ) {
 		static $anon = null;
 		if ( !$anon ) {
@@ -548,6 +570,8 @@ class Labs {
 		$wgHooks['UserEffectiveGroups'][] = $this;
 		$wgHooks['SkinTemplateToolboxEnd'][] = $this;
 		$wgHooks['UserLoadFromSession'][] = $this;
+		$wgHooks['UserLoginForm'][] = $this;
+		$wgHooks['UserLogoutComplete'][] = $this;
 	}
 
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
