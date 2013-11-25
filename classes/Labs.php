@@ -170,10 +170,11 @@ class Labs {
 			$wgServer, $wgCanonicalServer, $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath, $IP,
 			$wgForeignFileRepos, $wgUploadDirectory, $wgGenerateThumbnailOnParse, $wgLanguageConverterCacheType,
 			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache,
-			$wgExtensionFunctions;
+			$wgExtensionFunctions, $wgCookiePrefix;
 
 		# Basic stuff
 		$wgDBname = $this->dbName;
+		$wgCookiePrefix = $wgDBname;
 		$wgConf = $this->conf;
 		$wgLocalDatabases = $wgConf->getLocalDatabases(); # Setting as reference doesn't work?
 
