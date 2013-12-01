@@ -16,6 +16,7 @@ class LabsIdGenerator implements IdGenerator {
 			),
 			'bot' => '',
 			'new' => \ContentHandler::getForModelId( $type )->getEntityType(),
+			'summary' => 'Wikibase\IdGenerator::getNewId( ' . var_export( $type, true ) . ' )',
 		) );
 
 		if ( !isset( $resp->entity->id ) ) {
