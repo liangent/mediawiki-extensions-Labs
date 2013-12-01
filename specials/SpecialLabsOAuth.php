@@ -96,6 +96,9 @@ class SpecialLabsOAuth extends SpecialPage {
 		$tokenSecret = $token->secret;
 
 		$returnTo = $this->getRequest()->getSessionData( 'wsLabsOAuthReturnTo' );
+		if ( $returnTo === null ) {
+			$returnTo = $this->getRequest()->getVal( 'return_to' );
+		}
 		if ( $returnTo !== null ) {
 			$cookieOptions = array( 'prefix' => '' );
 			$this->getRequest()->response()->setCookie( 'labsOAuthToken', $tokenKey, 0, $cookieOptions );
