@@ -623,9 +623,7 @@ class Labs {
 	) {
 		$entity = $content->getEntity();
 		$serializerFactory = new Wikibase\Lib\Serializers\SerializerFactory();
-		$serializationOptions = new Wikibase\Lib\Serializers\EntitySerializationOptions(
-			Wikibase\Repo\WikibaseRepo::getDefaultInstance()->getIdFormatter()
-		);
+		$serializationOptions = new Wikibase\Lib\Serializers\SerializationOptions();
 		$serializer = $serializerFactory->newSerializerForObject( $entity, $serializationOptions );
 		$serialized = $serializer->getSerialized( $entity );
 		# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
