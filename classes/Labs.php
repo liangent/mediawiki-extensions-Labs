@@ -2,7 +2,7 @@
 
 class Labs {
 	static function setup() {
-		global $wgLabs, $wgToolserver, $wgScriptExtension, $wgUsePathInfo, $wgDBuser, $wgDBpassword;
+		global $wgLabs, $wgToolserver, $wgScriptExtension, $wgUsePathInfo, $wgDBuser, $wgDBpassword, $wgLabsDBprefix;
 
 		# Extract wiki to use
 		$wiki = '';
@@ -17,6 +17,9 @@ class Labs {
 		$pw = posix_getpwuid( posix_getuid() );
 		$mycnf = parse_ini_file( $pw['dir'] . '/replica.my.cnf' );
 		$wgDBuser = $mycnf['user'];
+		if ( $wgLabsDBprefix === null ) {
+			$wgLabsDBprefix = "{$wgDBuser}__wikidb_";
+		}
 		$wgDBpassword = $mycnf['password'];
 
 		# Create
@@ -170,7 +173,7 @@ class Labs {
 			$wgServer, $wgCanonicalServer, $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath, $IP,
 			$wgForeignFileRepos, $wgUploadDirectory, $wgGenerateThumbnailOnParse, $wgLanguageConverterCacheType,
 			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache,
-			$wgExtensionFunctions, $wgCookiePrefix;
+			$wgExtensionFunctions, $wgCookiePrefix, $wgLabsDBprefix;
 
 		# Basic stuff
 		$wgDBname = $this->dbName;
@@ -215,7 +218,7 @@ class Labs {
 			if ( $wiki == $wgDBname ) {
 				$wgLBFactoryConf['sectionLoads']['DEFAULT']["$wiki.labsdb"] = 0;
 				$wgLBFactoryConf['templateOverridesByServer']["$wiki.labsdb"] = array(
-					'dbname' => "{$wgDBuser}__wikidb_{$wgDBname}",
+					'dbname' => "{$wgLabsDBprefix}{$wgDBname}",
 				);
 			} else {
 				$wgLBFactoryConf['sectionsByDB'][$wiki] = $wiki;

@@ -32,6 +32,7 @@ $wgLabsConfigDir = dirname( __FILE__ ) . '/config';
 $wgLabsUsers = array();
 $wgLabsExtraMessageNS = NS_SPECIAL;
 $wgLabsExtraMessagePrefix = '';
+$wgLabsDBprefix = null;
 $wgLabsAcceptedSettings = array(
 	'wgUseDatabaseMessages' => 'bool',
 	'wgDisabledVariants' => 'array',
