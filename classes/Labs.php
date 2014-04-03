@@ -574,6 +574,7 @@ class Labs {
 		$wgHooks['UserLoginForm'][] = $this;
 		$wgHooks['UserLogoutComplete'][] = $this;
 		$wgHooks['TestCanonicalRedirect'][] = $this;
+		$wgHooks['PageArchive::undelete'][] = array( $this, 'onPageArchiveUndelete' );
 	}
 
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
@@ -825,6 +826,24 @@ class Labs {
 	}
 
 	function onTestCanonicalRedirect( $request, $title, $output ) {
+		return false;
+	}
+
+	function onPageArchiveUndelete( $pageArchive, $title, $timestamps, $comment, $fileVersions, $unsuppress, $user, &$result ) {
+		$resp = $this->apiRequest( array(
+			'action' => 'undelete',
+			'title' => $title->getPrefixedText(),
+			'reason' => $comment,
+			( empty( $timestamps ) ? 'notimestamps' : 'timestamps' ) => implode( '|', $timestamps ),
+			'token' => array(
+				'type' => 'token',
+				# https://bugzilla.wikimedia.org/show_bug.cgi?id=63475
+				'token' => 'delete',
+			),
+		) );
+		if ( isset( $resp->undelete ) ) {
+			$result = array( $resp->undelete->revisions, $resp->undelete->fileversions, $resp->undelete->reason );
+		}
 		return false;
 	}
 }
