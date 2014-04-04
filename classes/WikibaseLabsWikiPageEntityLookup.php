@@ -4,8 +4,8 @@ namespace Wikibase;
 
 class LabsWikiPageEntityLookup extends WikiPageEntityLookup {
 
-	public function __construct() {
-		parent::__construct( false, false );
+	public function __construct( $wiki = false ) {
+		parent::__construct( $wiki, false );
 	}
 
 	/**
@@ -104,8 +104,24 @@ class LabsWikiPageEntityLookup extends WikiPageEntityLookup {
 		//NOTE: $row contains revision fields from another wiki. This SHOULD not
 		//      cause any problems, since getRevisionText should only look at the old_flags
 		//      and old_text fields. But be aware.
-		//XXX / Labs: It's safe here as the first argument to the constructor of the parent class is forced to be false.
-		$blob = \Revision::newFromRow( $row )->getSerializedData();
+		if ( $this->wiki === false ) {
+			// Labs: It's safe here as the first argument to the constructor of the parent class is forced to be false.
+			$blob = \Revision::newFromRow( $row )->getSerializedData();
+		} else {
+			// Oh no let's run getText from the source wiki, which must be the repo.
+			global $IP;
+			$namespaces = Settings::singleton()->getSetting( 'repoNamespaces' );
+			$namespaceIndex = "wikibase-$entityType";
+			$titleText = "{$namespaces[$namespaceIndex]}:{$row->page_title}";
+			$cmd = wfShellWikiCmd( "$IP/maintenance/getText.php", array(
+				'--wiki', $this->wiki, $titleText,
+			) );
+			$retVal = -1;
+			$blob = wfShellExec( $cmd, $retVal );
+			if ( $retVal !== 0 ) {
+				$blob = false;
+			}
+		}
 
 		if ( $blob === false ) {
 			// oops. something went wrong.
