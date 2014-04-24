@@ -1,6 +1,6 @@
 <?php
 
-class LBFactory_Labs extends LBFactory_Multi {
+class LBFactory_Labs extends LBFactoryMulti {
 	# To use a customized LoadBalancer class
 	function newLoadBalancer( $template, $loads, $groupLoads ) {
 		global $wgMasterWaitTimeout;
