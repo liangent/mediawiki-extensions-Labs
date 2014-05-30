@@ -1,9 +1,7 @@
 <?php
 
 class Labs {
-	static function setup() {
-		global $wgLabs, $wgToolserver, $wgScriptExtension, $wgUsePathInfo, $wgDBuser, $wgDBpassword, $wgLabsDBprefix;
-
+	static function extractWiki() {
 		# Extract wiki to use
 		$wiki = '';
 		if ( defined( 'MW_DB' ) ) {
@@ -12,6 +10,11 @@ class Labs {
 		if ( isset( $_SERVER['PATH_INFO'] ) && $wiki === '' ) {
 			$wiki = ltrim( $_SERVER['PATH_INFO'], '/' );
 		}
+		return $wiki;
+	}
+
+	static function setup( $wiki ) {
+		global $wgLabs, $wgToolserver, $wgScriptExtension, $wgUsePathInfo, $wgDBuser, $wgDBpassword, $wgLabsDBprefix;
 
 		# Database user
 		$pw = posix_getpwuid( posix_getuid() );
