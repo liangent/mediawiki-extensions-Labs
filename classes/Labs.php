@@ -238,7 +238,7 @@ class Labs {
 			'oldimage', 'page', 'page_props', 'page_restrictions', 'pagelinks', 'protected_titles',
 			'recentchanges', 'redirect', 'revision_userindex' => 'revision',
 			'site_identifiers', 'site_stats', 'sites', 'tag_summary', 'templatelinks', 'updatelog',
-			'user', 'user_former_groups', 'user_groups', 'valid_tag',
+			'user', 'user_former_groups', 'user_groups', 'user_properties', 'valid_tag',
 			/* Wikibase: */ 'wb_changes', 'wb_changes_dispatch',
 			'wb_entity_per_page', 'wb_id_counters', 'wb_items_per_site', 'wb_terms',
 		);
