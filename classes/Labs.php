@@ -59,7 +59,7 @@ class Labs {
 
 		# Try to load configurations
 		$wmfConfigDir = "$wgLabsConfigDir/wmf-config";
-		if ( !MWInit::functionExists( 'getRealmSpecificFilename' ) ) {
+		if ( !function_exists( 'getRealmSpecificFilename' ) ) {
 			function getRealmSpecificFilename( $file ) {
 				global $IP, $wgLabsConfigDir;
 
