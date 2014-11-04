@@ -10,6 +10,7 @@ $wgAutoloadClasses['Wikibase\LabsClientStore'] = dirname( __FILE__ ) . '/classes
 $wgAutoloadClasses['Wikibase\LabsIdGenerator'] = dirname( __FILE__ ) . '/classes/WikibaseLabsIdGenerator.php';
 $wgAutoloadClasses['Wikibase\LabsWikiPageEntityLookup'] = dirname( __FILE__ ) . '/classes/WikibaseLabsWikiPageEntityLookup.php';
 $wgAutoloadClasses['SpecialLabsOAuth'] = dirname( __FILE__ ) . '/specials/SpecialLabsOAuth.php';
+$wgAutoloadClasses['LabsPageQueryPage'] = dirname( __FILE__ ) . '/classes/LabsPageQueryPage.php';
 
 $wgExtensionMessagesFiles[ 'Labs' ] = __DIR__ . '/Labs.i18n.php';
 $wgExtensionMessagesFiles[ 'LabsAlias' ] = __DIR__ . '/Labs.alias.php';
