@@ -5,10 +5,7 @@ $wgAutoloadClasses['DatabaseLabs'] = dirname( __FILE__ ) . '/classes/DatabaseLab
 $wgAutoloadClasses['LBFactory_Labs'] = dirname( __FILE__ ) . '/classes/LBFactory_Labs.php';
 $wgAutoloadClasses['LoadBalancerLabs'] = dirname( __FILE__ ) . '/classes/LoadBalancerLabs.php';
 $wgAutoloadClasses['RemoteUtils'] = dirname( __FILE__ ) . '/classes/RemoteUtils.php';
-$wgAutoloadClasses['Wikibase\LabsStore'] = dirname( __FILE__ ) . '/classes/WikibaseLabsStore.php';
-$wgAutoloadClasses['Wikibase\LabsClientStore'] = dirname( __FILE__ ) . '/classes/WikibaseLabsClientStore.php';
 $wgAutoloadClasses['Wikibase\LabsIdGenerator'] = dirname( __FILE__ ) . '/classes/WikibaseLabsIdGenerator.php';
-$wgAutoloadClasses['Wikibase\LabsWikiPageEntityLookup'] = dirname( __FILE__ ) . '/classes/WikibaseLabsWikiPageEntityLookup.php';
 $wgAutoloadClasses['SpecialLabsOAuth'] = dirname( __FILE__ ) . '/specials/SpecialLabsOAuth.php';
 $wgAutoloadClasses['LabsPageQueryPage'] = dirname( __FILE__ ) . '/classes/LabsPageQueryPage.php';
 

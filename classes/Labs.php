@@ -292,15 +292,6 @@ class Labs {
 
 		// Wikibase
 		$wgExtensionFunctions[] = function() {
-			global $wgWBStores, $wgWBClientStores;
-			if ( isset( $wgWBStores ) ) {
-				$wgWBStores['labsstore'] = 'Wikibase\LabsStore';
-				Wikibase\Settings::singleton()->setSetting( 'defaultStore', 'labsstore' );
-			}
-			if ( isset( $wgWBClientStores ) ) {
-				$wgWBClientStores['labsstore'] = 'Wikibase\LabsClientStore';
-				Wikibase\Settings::singleton()->setSetting( 'defaultClientStore', 'labsstore' );
-			}
 			if ( class_exists( 'Wikibase\Settings' ) ) {
 				Wikibase\Settings::singleton()->setSetting( 'sharedCacheType', false );
 			}
