@@ -624,7 +624,15 @@ class Labs {
 	function wikibaseEntityContentSave( &$article, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
 	) {
-		$entity = $content->getEntity();
+		if ( $content->isRedirect() ) {
+			# wbcreateredirect works on empty entities only.
+			# Go through this function to clear it first.
+			$factory = Wikibase\EntityFactory::singleton(); # WARNING: deprecated!
+			$entity = $factory->newEmpty( $content->getEntityId()->getEntityType() );
+			$entity->setId( $content->getEntityId() );
+		} else {
+			$entity = $content->getEntity();
+		}
 		$serializerFactory = new Wikibase\Lib\Serializers\SerializerFactory();
 		$serializationOptions = new Wikibase\Lib\Serializers\SerializationOptions();
 		$serializer = $serializerFactory->newSerializerForObject( $entity, $serializationOptions );
@@ -667,9 +675,47 @@ class Labs {
 			$status->setResult( false, $resp );
 			return false;
 		}
+		if ( $content->isRedirect() ) {
+			return $this->wikibaseEntityRedirectContentSave( $article, $user, $content, $summary,
+				$minor, $watchthis, $sectionanchor, $flags, $status, $baseRevId
+			);
+		}
 		$status->setResult( true, array(
 			'revision' => Revision::newFromId( $resp->entity->lastrevid ),
 		) );
+		return false;
+	}
+
+	function wikibaseEntityRedirectContentSave( &$article, &$user, &$content, &$summary, $minor,
+		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
+	) {
+		$redirect = $content->getEntityRedirect();
+		$resp = $this->apiRequest( array(
+			'action' => 'wbcreateredirect',
+			'from' => $redirect->getEntityId()->getSerialization(),
+			'to' => $redirect->getTargetId()->getSerialization(),
+			'token' => array(
+				'type' => 'token',
+				'token' => 'edit',
+			),
+			( $flags & EDIT_SUPPRESS_RC ? 'bot' : 'notbot' ) => '',
+		) );
+		if ( $resp === null ) {
+			$status->fatal( "edit-api-server-error" );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		if ( isset( $resp->error ) ) {
+			$status->fatal( "edit-api-{$resp->error->code}" );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		if ( !isset( $resp->success ) ) {
+			$status->fatal( 'edit-api-remote' );
+			$status->setResult( false, $resp );
+			return false;
+		}
+		$status->setResult( true );
 		return false;
 	}
 
