@@ -560,6 +560,10 @@ class Labs {
 	function installHooks() {
 		global $wgHooks;
 
+		if ( defined( 'MEDIAWIKI_INSTALL' ) ) {
+			return;
+		}
+
 		$wgHooks['PageContentSave'][] = $this;
 		$wgHooks['ArticlePurge'][] = $this;
 		$wgHooks['LinksUpdate'][] = $this;

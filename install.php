@@ -6,6 +6,9 @@ $IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 
 require_once( "$IP/maintenance/Maintenance.php" );
 
+define( 'MW_CONFIG_FILE', "$IP/extensions/Labs/InstallerSettings.php" );
+define( 'MEDIAWIKI_INSTALL', true );
+
 class LabsCommandLineInstaller extends Maintenance {
 	function execute() {
 		global $wgDBname, $wgUploadDirectory;
