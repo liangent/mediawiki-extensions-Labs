@@ -19,34 +19,33 @@ abstract class LabsPageQueryPage extends PageQueryPage {
 		$html = parent::formatResult( $skin, $row );
 
 		if ( $title instanceof Title ) {
-			$html .= wfMessage( 'word-separator' )->escaped()
-				. wfMessage( 'parentheses' )->rawParams( htmlspecialchars( $wgSitename )
-					. wfMessage( 'colon-separator' )->escaped() . Linker::makeExternalLink(
-						wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
-							'title' => $title->getPrefixedDBkey(),
-						) ), wfMessage( 'view' )->text()
-					) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
-						wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
-							'title' => $title->getPrefixedDBkey(),
-							'action' => 'edit',
-						) ), wfMessage( 'edit' )->text()
-					) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
-						wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
-							'title' => $title->getPrefixedDBkey(),
-							'action' => 'history',
-						) ), wfMessage( 'history' )->text()
-					) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
-						wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
-							'title' => $title->getPrefixedDBkey(),
-							'action' => 'delete',
-						) ), wfMessage( 'delete' )->text()
-					) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
-						wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
-							'title' => $title->getPrefixedDBkey(),
-							'action' => 'protect',
-						) ), wfMessage( 'protect' )->text()
-					)
-				)->escaped();
+			$html = $this->getLanguage()->specialList( $html, htmlspecialchars( $wgSitename )
+				. wfMessage( 'colon-separator' )->escaped() . Linker::makeExternalLink(
+					wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
+						'title' => $title->getPrefixedDBkey(),
+					) ), wfMessage( 'view' )->text()
+				) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
+					wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
+						'title' => $title->getPrefixedDBkey(),
+						'action' => 'edit',
+					) ), wfMessage( 'edit' )->text()
+				) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
+					wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
+						'title' => $title->getPrefixedDBkey(),
+						'action' => 'history',
+					) ), wfMessage( 'history' )->text()
+				) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
+					wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
+						'title' => $title->getPrefixedDBkey(),
+						'action' => 'delete',
+					) ), wfMessage( 'delete' )->text()
+				) . wfMessage( 'pipe-separator' )->escaped() . Linker::makeExternalLink(
+					wfAppendQuery( $wgWMFServer . $wgWMFScriptPath, array(
+						'title' => $title->getPrefixedDBkey(),
+						'action' => 'protect',
+					) ), wfMessage( 'protect' )->text()
+				)
+			);
 		}
 
 		return $html;
