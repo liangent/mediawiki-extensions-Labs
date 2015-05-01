@@ -583,7 +583,7 @@ class Labs {
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
 	) {
-		global $wmgUseWikibaseRepo;
+		global $wmgUseWikibaseRepo, $maintClass;
 		if ( $wmgUseWikibaseRepo && $content instanceof Wikibase\EntityContent ) {
 			return $this->wikibaseEntityContentSave( $article, $user, $content, $summary, $minor,
 				$watchthis, $sectionanchor, $flags, $status, $baseRevId
@@ -607,6 +607,7 @@ class Labs {
 			'basetimestamp' => $baseRev ? $baseRev->getTimestamp() : '',
 			'starttimestamp' => $baseRev ? $baseRev->getTimestamp() : '',
 			'md5' => md5( $text ),
+			'tags' => isset( $maintClass ) ? $maintClass : '',
 		) );
 		if ( $resp === null ) {
 			$status->fatal( "edit-api-server-error" );
