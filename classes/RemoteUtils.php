@@ -4,6 +4,35 @@ class RemoteUtils {
 	static function newSection( $title, $sectiontitle = null, $text = '', $summary = null, $flags = 0 ) {
 		global $wgLabs, $maintClass;
 
+		if ( $title->getContentModel() == 'flow-board' ) {
+			$resp = $wgLabs->apiRequest( array(
+				'action' => 'flow',
+				'submodule' => 'new-topic',
+				'page' => $title->getPrefixedText(),
+				'nttopic' => is_null( $sectiontitle ) ? '-' : $sectiontitle,
+				'ntcontent' => $text == '' ? '-' : $text,
+				'ntformat' => 'wikitext',
+				'token' => array(
+					'type' => 'token',
+					'token' => 'edit',
+				),
+			) );
+			$status = new Status();
+			if ( !$resp ) {
+				$status->fatal( 'ru-newsection-network' );
+				return $status;
+			}
+			if ( isset( $resp->error ) ) {
+				$status->fatal( "ru-newsection-{$resp->error->code}" );
+				return $status;
+			}
+			if ( $resp->flow->{'new-topic'}->status !== 'ok' ) {
+				$status->fatal( 'ru-newsection-remote' );
+			}
+			$status->setResult( true, $resp->flow->{'new-topic'} );
+			return $status;
+		}
+
 		$resp = $wgLabs->apiRequest( array(
 			'action' => 'edit',
 			'title' => $title->getPrefixedText(),
