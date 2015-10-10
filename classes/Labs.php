@@ -191,6 +191,8 @@ class Labs {
 			'private', 'fishbowl', 'special', 'closed', 'flaggedrevs',
 			'small', 'medium', 'large', 'wikimania',
 			'wikidata', 'wikidataclient',
+			'visualeditor-default', 'commonsuploads', 'nonbetafeatures',
+			'group0', 'wikipedia', 'arbitraryaccess', 'nonglobal',
 		) as $tag ) {
 			$dblist = array_map( 'trim', file( "$wgLabsConfigDir/$tag.dblist" ) );
 			if ( in_array( $wgDBname, $dblist ) ) {
