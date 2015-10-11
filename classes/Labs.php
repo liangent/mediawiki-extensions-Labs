@@ -640,10 +640,8 @@ class Labs {
 		} else {
 			$entity = $content->getEntity();
 		}
-		$serializerFactory = new Wikibase\Lib\Serializers\SerializerFactory();
-		$serializationOptions = new Wikibase\Lib\Serializers\SerializationOptions();
-		$serializer = $serializerFactory->newSerializerForObject( $entity, $serializationOptions );
-		$serialized = $serializer->getSerialized( $entity );
+		$serializer = Wikibase\Repo\WikibaseRepo::getDefaultInstance()->getInternalEntitySerializer();
+		$serialized = $serializer->serialize( $entity );
 		# https://bugzilla.wikimedia.org/show_bug.cgi?id=54146
 		unset( $serialized['id'] );
 		unset( $serialized['type'] );
