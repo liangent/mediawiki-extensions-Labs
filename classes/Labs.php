@@ -176,7 +176,7 @@ class Labs {
 			$wgServer, $wgCanonicalServer, $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath, $IP,
 			$wgForeignFileRepos, $wgUploadDirectory, $wgGenerateThumbnailOnParse, $wgLanguageConverterCacheType,
 			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache,
-			$wgExtensionFunctions, $wgCookiePrefix, $wgLabsDBprefix;
+			$wgExtensionFunctions, $wgCookiePrefix, $wgLabsDBprefix, $wgMainStash;
 
 		# Basic stuff
 		$wgDBname = $this->dbName;
@@ -257,6 +257,8 @@ class Labs {
 		$wgMessageCacheType = CACHE_NONE;
 		$wgLanguageConverterCacheType = CACHE_NONE;
 		$wgEnableSidebarCache = false;
+		# Use DB objectcache
+		$wgMainStash = 'db-replicated';
 
 		# Remote
 		$wgWMFServer = $wgServer; # $wgServer was set by $wgConf
