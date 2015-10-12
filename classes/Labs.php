@@ -14,7 +14,8 @@ class Labs {
 	}
 
 	static function setup( $wiki ) {
-		global $wgLabs, $wgToolserver, $wgScriptExtension, $wgUsePathInfo, $wgDBuser, $wgDBpassword, $wgLabsDBprefix;
+		global $wgLabs, $wgToolserver, $wgUsePathInfo, $wgDBuser, $wgDBpassword, $wgLabsDBprefix,
+			$wgScriptPath, $wgScript, $wgLoadScript;
 
 		# Database user
 		$pw = posix_getpwuid( posix_getuid() );
@@ -39,7 +40,9 @@ class Labs {
 
 		# Path setup
 		$wgUsePathInfo = false;
-		$wgScriptExtension .= "/$wiki";
+		unset( $_SERVER['REQUEST_URI'] );
+		$wgScript = "$wgScriptPath/index.php/$wiki";
+		$wgLoadScript = "$wgScriptPath/load.php/$wiki";
 
 		# Hooks
 		$wgLabs->installHooks();
