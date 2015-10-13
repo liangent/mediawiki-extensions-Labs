@@ -179,7 +179,7 @@ class Labs {
 			$wgServer, $wgCanonicalServer, $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath, $IP,
 			$wgForeignFileRepos, $wgUploadDirectory, $wgGenerateThumbnailOnParse, $wgLanguageConverterCacheType,
 			$wgRevisionCacheExpiry, $wgMaxMsgCacheEntrySize, $wgMessageCacheType, $wgEnableSidebarCache,
-			$wgExtensionFunctions, $wgCookiePrefix, $wgLabsDBprefix, $wgMainStash;
+			$wgExtensionFunctions, $wgCookiePrefix, $wgLabsDBprefix, $wgMainStash, $wgUseLocalMessageCache;
 
 		# Basic stuff
 		$wgDBname = $this->dbName;
@@ -258,6 +258,7 @@ class Labs {
 		$wgMaxMsgCacheEntrySize = -1;
 		# Nobody clears cache on message change
 		$wgMessageCacheType = CACHE_NONE;
+		$wgUseLocalMessageCache = false;
 		$wgLanguageConverterCacheType = CACHE_NONE;
 		$wgEnableSidebarCache = false;
 		# Use DB objectcache
