@@ -588,6 +588,7 @@ class Labs {
 		$wgHooks['UserLogoutComplete'][] = $this;
 		$wgHooks['TestCanonicalRedirect'][] = $this;
 		$wgHooks['PageArchive::undelete'][] = array( $this, 'onPageArchiveUndelete' );
+		$wgHooks['ResourceLoaderGetConfigVars'][] = $this;
 	}
 
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
@@ -903,5 +904,15 @@ class Labs {
 			$result = array( $resp->undelete->revisions, $resp->undelete->fileversions, $resp->undelete->reason );
 		}
 		return false;
+	}
+
+	function onResourceLoaderGetConfigVars( &$vars ) {
+		global $wgWMFServer, $wgWMFCanonicalServer, $wgWMFScriptPath;
+
+		$vars['wgWMFServer'] = $wgWMFServer;
+		$vars['wgWMFCanonicalServer'] = $wgWMFCanonicalServer;
+		$vars['wgWMFScriptPath'] = $wgWMFScriptPath;
+
+		return true;
 	}
 }
