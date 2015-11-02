@@ -125,6 +125,7 @@ class DispatchRecentChanges extends Maintenance {
 
 	public function cleanup() {
 		MessageCache::singleton()->getParserOptions()->setTimestamp( null );
+		LinkCache::destroySingleton();
 	}
 }
 
