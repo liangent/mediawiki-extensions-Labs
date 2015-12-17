@@ -11,4 +11,8 @@ class LBFactory_Labs extends LBFactoryMulti {
 		));
 		return $lb;
 	}
+
+	function newExternalLB( $cluster, $wiki = false ) {
+		return $this->getMainLB( $wiki );
+	}
 }
