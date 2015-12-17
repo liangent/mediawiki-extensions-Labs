@@ -8,7 +8,7 @@ class LBFactory_Labs extends LBFactoryMulti {
 		$lb = new LoadBalancerLabs( array(
 			'servers' => $servers,
 			'masterWaitTimeout' => $wgMasterWaitTimeout
-		));
+		) );
 		return $lb;
 	}
 
