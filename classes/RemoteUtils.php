@@ -2,7 +2,7 @@
 
 class RemoteUtils {
 	static function newSection( $title, $sectiontitle = null, $text = '', $summary = null, $flags = 0 ) {
-		global $wgLabs, $maintClass;
+		global $wgLabs;
 
 		if ( $title->getContentModel() == 'flow-board' ) {
 			$resp = $wgLabs->apiRequest( array(
@@ -49,7 +49,7 @@ class RemoteUtils {
 			( $flags & EDIT_NEW ? 'createonly' : 'notcreateonly' ) => '',
 			( $flags & EDIT_UPDATE ? 'nocreate' : 'notnocreate' ) => '',
 			'md5' => md5( $text ),
-			'tags' => isset( $maintClass ) ? $maintClass : '',
+			'tags' => $wgLabs->getTags(),
 		) );
 		$status = new Status();
 		if ( !$resp ) {
@@ -68,7 +68,7 @@ class RemoteUtils {
 	}
 
 	static function insertText( $title, $prependtext = '', $appendtext = '', $summary = null, $flags = 0, $section = null ) {
-		global $wgLabs, $maintClass;
+		global $wgLabs;
 
 		$resp = $wgLabs->apiRequest( array(
 			'action' => 'edit',
@@ -86,7 +86,7 @@ class RemoteUtils {
 			( $flags & EDIT_NEW ? 'createonly' : 'notcreateonly' ) => '',
 			( $flags & EDIT_UPDATE ? 'nocreate' : 'notnocreate' ) => '',
 			'md5' => md5( $prependtext . $appendtext ),
-			'tags' => isset( $maintClass ) ? $maintClass : '',
+			'tags' => $wgLabs->getTags(),
 		) );
 		$status = new Status();
 		if ( !$resp ) {

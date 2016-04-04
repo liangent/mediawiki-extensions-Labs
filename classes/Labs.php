@@ -591,10 +591,15 @@ class Labs {
 		$wgHooks['ResourceLoaderGetConfigVars'][] = $this;
 	}
 
+	function getTags() {
+		global $maintClass;
+		return isset( $maintClass ) && in_array( $maintClass, ChangeTags::listExplicitlyDefinedTags() ) ? $maintClass : '';
+	}
+
 	function onPageContentSave( &$article, &$user, &$content, &$summary, $minor,
 		$watchthis, $sectionanchor, &$flags, &$status, &$baseRevId = false
 	) {
-		global $wmgUseWikibaseRepo, $maintClass;
+		global $wmgUseWikibaseRepo;
 		if ( $wmgUseWikibaseRepo && $content instanceof Wikibase\EntityContent ) {
 			return $this->wikibaseEntityContentSave( $article, $user, $content, $summary, $minor,
 				$watchthis, $sectionanchor, $flags, $status, $baseRevId
@@ -618,7 +623,7 @@ class Labs {
 			'basetimestamp' => $baseRev ? $baseRev->getTimestamp() : '',
 			'starttimestamp' => $baseRev ? $baseRev->getTimestamp() : '',
 			'md5' => md5( $text ),
-			'tags' => isset( $maintClass ) ? $maintClass : '',
+			'tags' => $this->getTags(),
 		) );
 		if ( $resp === null ) {
 			$status->fatal( "edit-api-server-error" );
