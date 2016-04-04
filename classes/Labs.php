@@ -826,6 +826,7 @@ class Labs {
 			),
 			'summary' => $summary,
 			( $bot ? 'markbot' : 'nomarkbot' ) => '',
+			'tags' => $this->getTags(),
 		) );
 		if ( isset( $resp->error ) ) {
 			$result = array( array( $resp->error->code ) );
