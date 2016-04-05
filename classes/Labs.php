@@ -648,7 +648,7 @@ class Labs {
 		if ( $content->isRedirect() ) {
 			# wbcreateredirect works on empty entities only.
 			# Go through this function to clear it first.
-			$factory = Wikibase\EntityFactory::singleton(); # WARNING: deprecated!
+			$factory = Wikibase\Repo\WikibaseRepo::getDefaultInstance()->getEntityFactory(); # WARNING: deprecated!
 			$entity = $factory->newEmpty( $content->getEntityId()->getEntityType() );
 			$entity->setId( $content->getEntityId() );
 		} else {
